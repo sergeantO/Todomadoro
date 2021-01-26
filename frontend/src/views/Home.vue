@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="min-height: 100vh">
     <v-navigation-drawer app v-model="drawer" temporary>
       <Drawer />
     </v-navigation-drawer>
@@ -28,7 +28,6 @@
           >Заметки</v-tab
         >
         <v-tab v-if="typeof selectedProject === 'string'">Этапы</v-tab>
-        <v-tab v-if="typeof selectedProject === 'string'">Отчеты</v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="tab">
@@ -46,9 +45,6 @@
         <v-tab-item v-if="typeof selectedProject === 'string'">
           <!-- <MilestoneList :milestones="milestones" /> -->
         </v-tab-item>
-        <v-tab-item v-if="typeof selectedProject === 'string'">
-          Отчеты (пока не готово)
-        </v-tab-item>
       </v-tabs-items>
     </v-main>
 
@@ -59,6 +55,10 @@
         Hide Overlay
       </v-btn>
     </v-overlay>
+
+    <v-btn color="primary" fixed bottom right fab @click="addNewTask()">
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -88,6 +88,16 @@ export default {
 
   created() {
     this.$store.dispatch('App/init')
+  },
+
+  methods: {
+    addNewTask() {
+      this.$store.commit('App/setDialog', {
+        date: null,
+        description: '',
+        projectId: 'root'
+      })
+    }
   },
 
   computed: {

@@ -66,9 +66,9 @@ export default {
       dates: dateHelper.SETUP_CATEGORIES,
       projects: ['Проект 1', 'Проект 2'],
 
-      description: this.todoProp.description || '',
-      date: this.todoProp.date || null,
-      projectId: this.todoProp.projectId || '',
+      description: '',
+      date: null,
+      projectId: '',
 
       testDate: dateHelper.SETUP_CATEGORIES[0],
       testProj: 'Проект 1'
