@@ -25,18 +25,10 @@ export default {
 
   data() {
     return {
-      SETUP_DAY:
-        dateHelper.SETUP_CATEGORIES[dateHelper.SETUP_CATEGORIES.length - 1],
-      dates: dateHelper.SETUP_CATEGORIES,
-      projects: ['Проект 1', 'Проект 2'],
-      dialog: false,
       description: this.todoProp.description || '',
       completed: this.todoProp.completed || false,
       date: this.todoProp.date || null,
       projectId: this.todoProp.projectId || '',
-
-      testDate: dateHelper.SETUP_CATEGORIES[0],
-      testProj: 'Проект 1'
     }
   },
 
