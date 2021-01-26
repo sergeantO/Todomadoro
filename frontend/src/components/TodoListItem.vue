@@ -1,10 +1,10 @@
 <template>
   <v-list-item>
     <v-checkbox v-model="completed"></v-checkbox>
-    <div
-      @click="$store.commit('App/setDialog', { date, description, projectId })"
-    >
-      {{ description }} {{ date }}
+    <div class="task-item" @click="openDialog()">
+      <span>{{ description }}</span>
+      <v-spacer></v-spacer>
+      <v-chip v-if="taskIsOverdue()">{{ date | capitalize }}</v-chip>
     </div>
   </v-list-item>
 </template>
@@ -39,11 +39,26 @@ export default {
       testProj: 'Проект 1'
     }
   },
+
   methods: {
-    dateToDatesArray() {
-      // this.date
-      // let dates = date()
-      // return today
+    taskIsOverdue() {
+      return this.date && this.date < Date.now()
+    },
+    openDialog() {
+      this.$store.commit('App/setDialog', {
+        date: this.date,
+        description: this.description,
+        projectId: this.projectId
+      })
+    }
+  },
+
+  filters: {
+    capitalize: function(date) {
+      if (!date) return ''
+
+      var today = new Date().getTime()
+      return Math.ceil((today - date) / (1000 * 3600 * 24))
     }
   },
 
@@ -56,3 +71,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.task-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+</style>
