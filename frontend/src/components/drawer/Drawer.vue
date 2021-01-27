@@ -4,53 +4,24 @@
 
     <v-divider></v-divider>
 
-    <v-list-item-group
-      v-model="dateIndex"
-      active-class="deep-purple--text text--accent-4"
-    >
-      <v-list-item
-        v-for="(dg, i) in dateGroups"
-        :key="i"
-        @mouseup="selectedDateCategory = dg"
-      >
+    <v-list-item-group color="primary" @change="selectDate">
+      <v-list-item class="p36" v-for="(dg, i) in dateGroups" :key="i">
         <v-list-item-title>{{ dg }}</v-list-item-title>
       </v-list-item>
     </v-list-item-group>
 
     <v-divider></v-divider>
 
-    <v-list-item-group
-      v-model="projectIndex"
-      active-class="deep-purple--text text--accent-4"
-    >
-      <v-list-item @mouseup="selectedProjectId = false">
-        <v-list-item-title>Без категории</v-list-item-title>
-      </v-list-item>
-
-      <div v-for="{ id, name, projects } in projects" :key="id">
-        <v-list-item
-          link
-          v-if="projects.length === 0"
-          @mouseup="selectedProjectId = id"
-        >
-          <v-list-item-title>{{ name }}</v-list-item-title>
-        </v-list-item>
-
-        <v-list-group no-action v-else @mouseup="selectedProjectId = id">
-          <template v-slot:activator>
-            <v-list-item-title>{{ name }}</v-list-item-title>
-          </template>
-
-          <v-list-item
-            v-for="{ id, name } in projects"
-            :key="id"
-            @mouseup="selectedProjectId = id"
-          >
-            <v-list-item-title>{{ name }}</v-list-item-title>
-          </v-list-item>
-        </v-list-group>
-      </div>
-    </v-list-item-group>
+    <v-treeview
+      class="tree"
+      dense
+      :items="projects"
+      item-children="projects"
+      activatable
+      expand-icon="mdi-chevron-down"
+      @update:active="selectProject"
+      color="primary"
+    ></v-treeview>
   </v-list>
 </template>
 
@@ -65,40 +36,47 @@ export default {
 
   data() {
     return {
-      dateIndex: null,
-      projectIndex: null,
-
-      selectedProjectId: null,
-      selectedDateCategory: null,
-
       dateGroups: dateHelper.DAY_CATEGORIES
+    }
+  },
+
+  methods: {
+    selectProject(val) {
+      let selectedProjectId = val[0]
+
+      if (selectedProjectId == undefined) {
+        this.$store.commit('App/setSelectedProjectId', null)
+      } else {
+        this.$store.commit('App/setSelectedProjectId', selectedProjectId)
+      }
+    },
+    selectDate(val) {
+      if (val == undefined) {
+        this.$store.commit('App/setSelectedDateCategory', null)
+      } else {
+        this.$store.commit('App/setSelectedDateCategory', this.dateGroups[val])
+      }
     }
   },
 
   computed: {
     projects() {
       return this.$store.getters['App/projects']
-    }
-  },
-
-  watch: {
-    projectIndex: function(val) {
-      if (val == undefined) {
-        this.$store.commit('App/setSelectedProjectId', null)
-      } else {
-        this.$store.commit('App/setSelectedProjectId', this.selectedProjectId)
-      }
     },
-    dateIndex: function(val) {
-      if (val == undefined) {
-        this.$store.commit('App/setSelectedDateCategory', null)
-      } else {
-        this.$store.commit(
-          'App/setSelectedDateCategory',
-          this.selectedDateCategory
-        )
-      }
+    rootProjectId() {
+      return this.$store.getters['App/rootProjectId']
     }
   }
 }
 </script>
+
+<style>
+.tree {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1rem;
+}
+.p36 {
+  padding-left: 38px !important;
+}
+</style>

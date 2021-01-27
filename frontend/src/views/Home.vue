@@ -17,40 +17,28 @@
     </v-app-bar>
 
     <v-main>
-      <!-- <Breadcrumbs /> -->
       <v-tabs v-model="tab" center-active show-arrows grow>
         <v-tab>Задачи</v-tab>
-        <v-tab
-          v-if="
-            typeof selectedProject === 'string' ||
-              typeof selectedProject === 'boolean'
-          "
-          >Заметки</v-tab
-        >
-        <v-tab v-if="typeof selectedProject === 'string'">Этапы</v-tab>
+        <v-tab v-if="isAvailableNotes">Заметки</v-tab>
+        <v-tab v-if="isAvailableMilestones">Этапы</v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <TodoList :todosProp="todos" />
         </v-tab-item>
-        <v-tab-item
-          v-if="
-            typeof selectedProject === 'string' ||
-              typeof selectedProject === 'boolean'
-          "
-        >
-          <!-- <NoteList :notes="notes" /> -->
+        <v-tab-item v-if="isAvailableNotes">
+          NoteList
         </v-tab-item>
-        <v-tab-item v-if="typeof selectedProject === 'string'">
-          <!-- <MilestoneList :milestones="milestones" /> -->
+        <v-tab-item v-if="isAvailableMilestones">
+          milestones
         </v-tab-item>
       </v-tabs-items>
     </v-main>
 
     <TodoDialog />
 
-    <v-overlay :opacity="0.9" :value="overlay">
+    <v-overlay :opacity="0.99" :value="overlay">
       <v-btn color="orange lighten-2" @click="overlay = false">
         Hide Overlay
       </v-btn>
@@ -65,8 +53,6 @@
 <script>
 import Drawer from '@/components/drawer/Drawer.vue'
 import TodoList from '@/components/TodoList.vue'
-// import MilestoneList from '@/components/tabs/MilestonesList.vue'
-// import NoteList from '@/components/tabs/NoteList.vue'
 import TodoDialog from '@/components/TodoDialog'
 
 export default {
@@ -75,8 +61,6 @@ export default {
   components: {
     Drawer,
     TodoList,
-    // MilestoneList,
-    // NoteList,
     TodoDialog
   },
 
@@ -104,9 +88,24 @@ export default {
     projects() {
       return this.$store.getters['App/projects']
     },
+    todos() {
+      return this.$store.getters['App/tasks']
+    },
     selectedProject() {
       return this.$store.getters['App/selectedProjectId']
     },
+    isAvailableNotes() {
+      return this.selectedProject !== null
+    },
+    isAvailableMilestones() {
+      return (
+        this.selectedProject !== null &&
+        this.selectedProject !== this.rootProjectId
+      )
+    },
+    rootProjectId() {
+      return this.$store.getters['App/rootProjectId']
+    }
     // milestones() {
     //   if (typeof this.selectedProject === 'string') {
     //     return this.apiData.milestones.filter(
@@ -129,9 +128,6 @@ export default {
 
     //   return []
     // },
-    todos() {
-      return this.$store.getters['App/tasks']
-    }
   },
 
   watch: {

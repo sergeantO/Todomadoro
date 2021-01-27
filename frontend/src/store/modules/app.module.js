@@ -12,6 +12,7 @@ export default {
     },
 
     projects: [],
+    rootProjectId: '',
     tasks: [],
     milestones: [],
     notes: [],
@@ -28,7 +29,7 @@ export default {
 
     dialogData: state => state.dialogData,
     projects: state => state.projects,
-    rootProjectId: state => state.projects.id,
+    rootProjectId: state => state.rootProjectId,
     tasks(state) {
       let filteredProjects = []
 
@@ -49,8 +50,8 @@ export default {
     selectedProjectId: state => state.selectedProjectId
   },
   mutations: {
-    increment(state) {
-      state.count++
+    setRootProjectId(state, rootProjectId) {
+      state.rootProjectId = rootProjectId
     },
     setDialog(state, dialogData = {}) {
       state.dialogData = dialogData
@@ -83,7 +84,9 @@ export default {
 
       dataFetcher.then(data => {
         let projects = data.projects || []
+        projects.unshift({ id: data.id, name: 'Без проекта', projects: [] })
         let tasks = data.tasks || []
+        context.commit('setRootProjectId', data.id)
         context.commit('setProjects', projects)
         context.commit('setTasks', tasks)
       })

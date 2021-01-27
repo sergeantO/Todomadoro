@@ -1,6 +1,5 @@
 export const DAY_CATEGORIES = [
   'когда-нибудь',
-  'просрочено',
   'сегодня',
   'завтра',
   'на этой неделе',
@@ -43,12 +42,11 @@ export function dateToDayCategory(date) {
   if (date === null || date === undefined) return DAY_CATEGORIES[0]
 
   let dates = getDates()
-  if (date === dates.today) return DAY_CATEGORIES[1]
+  if (date <= dates.today) return DAY_CATEGORIES[1]
   if (date === dates.tomorow) return DAY_CATEGORIES[2]
-  if (date === dates.dayAfterTomorrow) return DAY_CATEGORIES[3]
-  if (date === dates.nextMonday) return DAY_CATEGORIES[4]
-  if (date === dates.afterNextMonday) return DAY_CATEGORIES[5]
-  if (date > dates.afterNextMonday) return DAY_CATEGORIES[6]
+  if (date === dates.nextMonday) return DAY_CATEGORIES[3]
+  if (date === dates.afterNextMonday) return DAY_CATEGORIES[4]
+  if (date > dates.afterNextMonday) return DAY_CATEGORIES[5]
 }
 
 export function filterByCategory(dayCategory, date) {
@@ -58,16 +56,14 @@ export function filterByCategory(dayCategory, date) {
     case DAY_CATEGORIES[0]:
       return date === null || date === undefined
     case DAY_CATEGORIES[1]:
-      return date < dates.today
+      return date <= dates.today
     case DAY_CATEGORIES[2]:
-      return date === dates.today
-    case DAY_CATEGORIES[3]:
       return date === dates.tomorow
-    case DAY_CATEGORIES[4]:
+    case DAY_CATEGORIES[3]:
       return date < dates.nextMonday
-    case DAY_CATEGORIES[5]:
+    case DAY_CATEGORIES[4]:
       return date < dates.afterNextMonday && date >= dates.nextMonday
-    case DAY_CATEGORIES[6]:
+    case DAY_CATEGORIES[5]:
       return date >= dates.afterNextMonday
     default:
       return true
@@ -93,10 +89,8 @@ export function dayCategoryToDate(dateCategory) {
     case DAY_CATEGORIES[2]:
       return dates.tomorow
     case DAY_CATEGORIES[3]:
-      return dates.dayAfterTomorrow
-    case DAY_CATEGORIES[4]:
       return dates.nextMonday
-    case DAY_CATEGORIES[5]:
+    case DAY_CATEGORIES[4]:
       return dates.afterNextMonday
     default:
       return null
