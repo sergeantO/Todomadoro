@@ -3,6 +3,7 @@ import $api from '@/services/api/apiClient'
 
 export default {
   namespaced: true,
+
   state: {
     isOpenedDialog: false,
     dialogData: {
@@ -20,16 +21,16 @@ export default {
     selectedDayCategory: null,
     selectedProjectId: null
   },
+
   getters: {
-    count: state => state.count,
     isOpenedDialog: state =>
-      state.dialogData.date ||
-      state.dialogData.description ||
-      state.dialogData.projectId,
+      !!state.dialogData.date ||
+      !!state.dialogData.description ||
+      !!state.dialogData.projectId,
 
     dialogData: state => state.dialogData,
     projects: state => state.projects,
-    rootProjectId: state => state.rootProjectId,
+    rootProjectId: state => state.projects[0]?.id,
     tasks(state) {
       let filteredProjects = []
 
@@ -49,10 +50,8 @@ export default {
     },
     selectedProjectId: state => state.selectedProjectId
   },
+
   mutations: {
-    setRootProjectId(state, rootProjectId) {
-      state.rootProjectId = rootProjectId
-    },
     setDialog(state, dialogData = {}) {
       state.dialogData = dialogData
     },
@@ -69,6 +68,7 @@ export default {
       state.selectedDayCategory = selectedDayCategory
     }
   },
+
   actions: {
     /**
      * Эта хуйня нужна только для адекватной разработки фронта с liveReload'ом
@@ -84,9 +84,11 @@ export default {
 
       dataFetcher.then(data => {
         let projects = data.projects || []
-        projects.unshift({ id: data.id, name: 'Без проекта', projects: [] })
+        projects = [
+          { id: data.id, name: 'Без проекта', projects: [] },
+          ...projects
+        ]
         let tasks = data.tasks || []
-        context.commit('setRootProjectId', data.id)
         context.commit('setProjects', projects)
         context.commit('setTasks', tasks)
       })
