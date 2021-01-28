@@ -8,8 +8,9 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title><b>ToDo</b>modoro</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text @click="overlay = true">
-        <v-icon>mdi-open-in-new</v-icon>
+      <v-btn text @click="openOverlay">
+        <v-icon>mdi-timer-sand</v-icon>
+        <p class="ma-0" v-if="isStartedLayout">{{ currtime }}</p>
       </v-btn>
       <v-btn text to="/about">
         <v-icon>mdi-help-circle</v-icon>
@@ -38,11 +39,9 @@
 
     <TodoDialog />
 
-    <v-overlay :opacity="0.99" :value="overlay">
-      <v-btn color="orange lighten-2" @click="overlay = false">
-        Hide Overlay
-      </v-btn>
-    </v-overlay>
+
+    <Overlay />
+
 
     <v-btn color="primary" fixed bottom right fab @click="addNewTask()">
       <v-icon>mdi-plus</v-icon>
@@ -51,9 +50,12 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
+
 import Drawer from '@/components/drawer/Drawer.vue'
 import TodoList from '@/components/TodoList.vue'
 import TodoDialog from '@/components/TodoDialog'
+import Overlay from '@/components/Overlay'
 
 export default {
   name: 'Home',
@@ -61,7 +63,8 @@ export default {
   components: {
     Drawer,
     TodoList,
-    TodoDialog
+    TodoDialog,
+    Overlay
   },
 
   data: () => ({
@@ -75,6 +78,7 @@ export default {
   },
 
   methods: {
+    ...mapMutations({ openOverlay: 'Overlay/open' }),
     addNewTask() {
       this.$store.commit('App/setDialog', {
         date: null,
@@ -105,7 +109,11 @@ export default {
     },
     rootProjectId() {
       return this.$store.getters['App/rootProjectId']
-    }
+    },
+    ...mapGetters({
+      currtime: 'Overlay/currtime',
+      isStartedLayout: 'Overlay/isStarted'
+    })
     // milestones() {
     //   if (typeof this.selectedProject === 'string') {
     //     return this.apiData.milestones.filter(
