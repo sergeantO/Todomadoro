@@ -12,6 +12,14 @@
 
     <v-divider></v-divider>
 
+    <div style="display: flex; align-items: center; padding-left: 36px;">
+      <h4>Проекты</h4>
+      <v-spacer></v-spacer>
+      <v-btn text color="secondary" @click="addProject()">
+        <v-icon color="primary">mdi-plus</v-icon>
+      </v-btn>
+    </div>
+
     <v-treeview
       class="tree"
       dense
@@ -56,6 +64,9 @@ export default {
       } else {
         this.$store.commit('App/setSelectedDateCategory', this.dateGroups[val])
       }
+    },
+    addProject() {
+      console.log('+')
     }
   },
 
